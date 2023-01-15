@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Facebook Page</title>
+  <style>
+    /* some styles for the form */
+    form{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    input[type="file"]{
+      margin: 10px 0;
+      padding: 5px;
+    }
+    textarea{
+      margin: 10px 0;
+      padding: 5px;
+      width: 300px;
+      height: 100px;
+    }
+    button{
+      padding: 10px 20px;
+      background-color: blue;
+      color: white;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    /* some styles for the posts */
+    .post{
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .post-image{
+      width: 300px;
+      height: 300px;
+      margin-left: 600px;
+      text-align: center;
+    }
+    *{
+      background-color:grey;
+    }
+    p{
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <form id="post-form">
+    <label for="image">Select Image:</label>
+    <input type="file" id="image-input" name="image" accept="image/*">
+    <br>
+    <label for="text">Enter Text:</label>
+    <textarea id="text-input" name="text"></textarea>
+    <br>
+    <button type="submit">Post</button>
+  </form>
+
+  <div id="posts"></div>
+  
+  <script>
+ // Get references to the form, image input, text input, and posts container
+var postForm = document.querySelector('#post-form');
+var imageInput = document.querySelector('#image-input');
+var textInput = document.querySelector('#text-input');
+var postsContainer = document.querySelector('#posts');
+
+// Add a submit event listener to the form
+postForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    // Get the image and text from the form
+    var image = imageInput.files[0];
+    var text = textInput.value;
+    // Use the FileReader API to convert the image to a data URL
+    var reader = new FileReader();
+    reader.onload = function(event) {
+        var dataURL = event.target.result;
+        // Create a new post object
+        var post = {
+            text: text,
+            image: dataURL
+        };
+        // Get the stored posts from local storage
+        var storedPosts = JSON.parse(localStorage.getItem('posts')) || [];
+        // Add the new post to the stored posts
+        storedPosts.push(post);
+        // Store the updated posts in local storage
+        localStorage.setItem('posts', JSON.stringify(storedPosts));
+        // Clear the form
+        postForm.reset();
+        // Display the new post
+        displayPost(post);
+    }
+    reader.readAsDataURL(image);
+});
+
+// Function to display a post
+function displayPost(post) {
+    // Create a new post element
+    var postElement = document.createElement('div');
+    postElement.classList.add('post');
+    postElement.innerHTML = `<img src="${post.image}" class="post-image">
+                            <p class="post
+                            //text">${post.text}</p>`;
+    // Add the post to the posts container
+    postsContainer.appendChild(postElement);
+}
+
+// Retrieve the posts from local storage when the page loads
+window.onload = function() {
+    var storedPosts = JSON.parse(localStorage.getItem('posts'));
+    // Check if there are stored posts
+    if (storedPosts) {
+        // Loop through the stored posts and display them
+        storedPosts.forEach(function(post) {
+            displayPost(post);
+        });
+    }
+};
+
+</script>
+</body>
+</html>
+
+       
